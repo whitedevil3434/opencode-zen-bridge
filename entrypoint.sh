@@ -10,15 +10,19 @@ mkdir -p "$OPENCODE_DIR"
 mkdir -p "$CONFIG_DIR"
 
 if [ -f "/app/auth.bundle.txt" ]; then
-  echo "[Entrypoint] Unpacking auth.bundle.txt into $OPENCODE_DIR/auth.json..."
-  base64 -d < /app/auth.bundle.txt > "$OPENCODE_DIR/auth.json"
-  chmod 600 "$OPENCODE_DIR/auth.json"
+  node /app/unpack-auth.cjs || true
 fi
 
 if [ -n "$OPENCODE_AUTH_B64" ]; then
   echo "[Entrypoint] Decoding and injecting OPENCODE_AUTH_B64 into $OPENCODE_DIR/auth.json..."
-  echo "$OPENCODE_AUTH_B64" | base64 -d > "$OPENCODE_DIR/auth.json"
-  chmod 600 "$OPENCODE_DIR/auth.json"
+  node -e "
+    const fs = require('fs');
+    const path = '$OPENCODE_DIR/auth.json';
+    const b64 = (process.env.OPENCODE_AUTH_B64 || '').replace(/\s+/g, '');
+    if (b64) {
+      fs.writeFileSync(path, Buffer.from(b64, 'base64').toString('utf8'), { mode: 0o600 });
+    }
+  "
 fi
 
 if [ -f "$OPENCODE_DIR/auth.json" ]; then
