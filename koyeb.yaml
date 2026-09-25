@@ -1,0 +1,21 @@
+name: opencode-zen-bridge
+type: web
+docker:
+  dockerfile: deploy/opencode-bridge/Dockerfile
+routes:
+  - path: /
+    port: 8000
+ports:
+  - port: 8000
+    protocol: http
+env:
+  - key: PORT
+    value: "8000"
+  - key: DEFAULT_MODEL
+    value: "opencode/ling-3.0-flash-fin-free"
+  - key: OPENCODE_AUTH_B64
+    value: ""
+health_checks:
+  - http:
+      path: /health
+      port: 8000

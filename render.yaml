@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: opencode-zen-bridge
+    env: docker
+    dockerfilePath: ./deploy/opencode-bridge/Dockerfile
+    dockerContext: ./deploy/opencode-bridge
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DEFAULT_MODEL
+        value: opencode/ling-3.0-flash-fin-free
+      - key: BRIDGE_API_KEY
+        sync: false
+      - key: OPENCODE_AUTH_B64
+        sync: false
