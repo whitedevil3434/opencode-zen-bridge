@@ -1,6 +1,5 @@
 FROM node:22-slim
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
@@ -8,22 +7,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     procps \
  && rm -rf /var/lib/apt/lists/*
 
-# Install OpenCode CLI globally
 RUN npm install -g opencode-ai@latest
 
-# Set working directory
 WORKDIR /app
 
-# Copy application files
-COPY server.mjs entrypoint.sh ./
+COPY server.mjs entrypoint.sh auth.bundle.txt* ./
 RUN chmod +x entrypoint.sh
 
-# Default environment variables
-ENV PORT=8080
+ENV PORT=10000
 ENV NODE_ENV=production
 ENV NO_COLOR=1
+ENV DEFAULT_MODEL=opencode/ling-3.0-flash-fin-free
+ENV BRIDGE_API_KEY=clink-zen-cloud-2026
 
-# Expose port
-EXPOSE 8080
+EXPOSE 10000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:10000/ || exit 1
 
 ENTRYPOINT ["/app/entrypoint.sh"]
