@@ -11,7 +11,7 @@ RUN npm install -g opencode-ai@latest
 
 WORKDIR /app
 
-COPY server.mjs entrypoint.sh auth.bundle.txt* ./
+COPY server.mjs entrypoint.sh unpack-auth.cjs auth.bundle.txt* ./
 RUN chmod +x entrypoint.sh
 
 ENV PORT=10000
